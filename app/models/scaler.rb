@@ -1,6 +1,12 @@
-class Scaler < ActiveRecord::Base
+class Scaler
+  include ActiveModel::Validations
+
   attr_accessor :image_dimensions, :bounding_box
-  validate :even_number_of_image_dimensions, :two_bounding_box_dimensions
+
+  validate :even_number_of_image_dimensions,
+            :image_dimensions_are_integers,
+            :two_bounding_box_dimensions,
+            :bounding_box_dimensions_are_integers
 
   def initialize(image_dimensions, bounding_box)
     @image_dimensions = image_dimensions
@@ -8,18 +14,54 @@ class Scaler < ActiveRecord::Base
   end
 
   def parse_image_dimensions
-    image_dimensions = image_dimensions[1..-2].split(",").map {|dim| dim.to_i}
+    self.image_dimensions = self.image_dimensions[1..-2].split(",").map {|dim| dim.to_i}
   end
 
   def parse_bounding_box
-    bounding_box = bounding_box[1..-2].split(",").map {|dim| dim.to_i}
+    self.bounding_box = self.bounding_box[1..-2].split(",").map {|dim| dim.to_i}
   end
 
-  def even_number_of_image_dimensions
-    image_dimensions.length % 2 == 0
+  def scale_dimensions
+    i = 0
+    while i < image_dimensions.length
+      x_scalar = bounding_box[0].to_f / image_dimensions[i]
+      y_scalar = bounding_box[1].to_f / image_dimensions[i + 1]
+
+      if x_scalar < y_scalar
+        image_dimensions[i] = (image_dimensions[i] * x_scalar).to_i
+        image_dimensions[i + 1] = (image_dimensions[i + 1] * x_scalar).to_i
+      else
+        image_dimensions[i] = (image_dimensions[i] * y_scalar).to_i
+        image_dimensions[i + 1] = (image_dimensions[i + 1] * y_scalar).to_i
+      end
+
+      i += 2
+    end
   end
 
-  def two_bounding_box_dimensions
-    bounding_box.length == 2
-  end
+  private
+
+    def even_number_of_image_dimensions
+      unless image_dimensions.length % 2 == 0
+        errors.add(:image_dimensions, "must have even number of dimensions")
+      end
+    end
+
+    def image_dimensions_are_integers
+      unless image_dimensions.all? { |dim| dim.is_a?(Integer) }
+        errors.add(:image_dimensions, "must all be integers")
+      end
+    end
+
+    def two_bounding_box_dimensions
+      unless bounding_box.length == 2
+        errors.add(:bounding_box, "must have two dimensions")
+      end
+    end
+
+    def bounding_box_dimensions_are_integers
+      unless bounding_box.all? { |dim| dim.is_a?(Integer) }
+        errors.add(:bounding_box, "dimensions must all be integers")
+      end
+    end
 end
