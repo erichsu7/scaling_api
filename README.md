@@ -37,11 +37,16 @@ JSON RESPONSE:
 
 ## Technical Overview
 
-This app is built on Rails. The controller passes the get request query parameters to the Scaler model, which performs all of the calculations.
+This app is built on Rails. The controller passes the get request query parameters to the `Scaler` model, which performs all of the calculations.
 
 ### Controller
-
-
-### Model
+The controller initializes a Scaler object with the query parameters (`image_dimensions` and `bounding_box`). After the scaler object performs the scaling, the new dimensions are rendered as JSON.
 
 #### Validations
+The controller validates presence of both `image_dimensions` and `bounding_box` parameters.
+
+### Model
+The `Scaler` model accepts `image_dimension` and `bounding_box` as strings. Then, the model parses the strings into arrays and performs the `scale_dimensions` operation.
+
+#### Validations
+The model checks if the `image_dimensions` are passed as pairs and if they are all integers. Also, it checks if two `bounding_box` dimensions are supplied and if they're both integers.
