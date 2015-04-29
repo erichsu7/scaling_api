@@ -1,4 +1,6 @@
 class ApiController < ApplicationController
+  before_action :check_input_presence, only: [:show]
+
   def show
     scaler = Scaler.new(params[:image_dimensions], params[:bounding_box])
     # Input comes in as string, so parse the string into an array.
@@ -14,4 +16,12 @@ class ApiController < ApplicationController
       render json: scaler.errors.full_messages
     end
   end
+
+  private
+
+    def check_input_presence
+      unless params[:image_dimensions] && params[:bounding_box]
+        render json: "Must input image dimensions and bounding box"
+      end
+    end
 end

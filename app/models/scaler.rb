@@ -2,7 +2,7 @@ class Scaler
   include ActiveModel::Validations
 
   attr_accessor :image_dimensions, :bounding_box
-
+  
   validate :even_number_of_image_dimensions,
             :image_dimensions_are_integers,
             :two_bounding_box_dimensions,
