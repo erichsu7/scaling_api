@@ -5,7 +5,7 @@ This lightweight app scales an array of image dimensions according to a bounding
 Check out the app using these queries:
 
 [One pair of image dimensions][simple_query]
-[simple_query]: scalingapi.herokuapp.com/?image_dimensions=[400,200]&bounding_box=[200,200]
+[simple_query]: https://scalingapi.herokuapp.com/?image_dimensions=[400,200]&bounding_box=[200,200]
 
 GET REQUEST:
 `{
@@ -20,7 +20,7 @@ JSON RESPONSE:
 }`
 
 [Multiple pairs of image dimensions][multiple_query]
-[multiple_query]: scalingapi.herokuapp.com/?image_dimensions=[1256,1200,600,800,200,200,400,200,800,1256]&bounding_box=[200,200]
+[multiple_query]: https://scalingapi.herokuapp.com/?image_dimensions=[1256,1200,600,800,200,200,400,200,800,1256]&bounding_box=[200,200]
 
 GET REQUEST:
 `{
@@ -30,7 +30,7 @@ GET REQUEST:
 
 JSON RESPONSE:
 `{
-  scaled_dimensions:  [200,100],
+  scaled_dimensions:  [200, 191, 150, 200, 200, 200, 200, 100, 127, 200],
   bounding_box:  [200,200]
 }`
 
