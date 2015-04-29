@@ -14,11 +14,17 @@ class Scaler
   end
 
   def parse_image_dimensions
-    self.image_dimensions = self.image_dimensions[1..-2].split(",").map {|dim| dim.to_i}
+    self.image_dimensions = self.image_dimensions[1..-2].split(",").map do |dim|
+      # A non-integer is converted to 0. Check if the conversion back to string
+      # still equals the original dimension to see if it's not an integer.
+      dim.to_i unless dim.to_i.to_s != dim
+    end
   end
 
   def parse_bounding_box
-    self.bounding_box = self.bounding_box[1..-2].split(",").map {|dim| dim.to_i}
+    self.bounding_box = self.bounding_box[1..-2].split(",").map do |dim|
+      dim.to_i unless dim.to_i.to_s != dim
+    end
   end
 
   def scale_dimensions
@@ -27,6 +33,7 @@ class Scaler
       x_scalar = bounding_box[0].to_f / image_dimensions[i]
       y_scalar = bounding_box[1].to_f / image_dimensions[i + 1]
 
+      #Scale down using smaller scalar
       if x_scalar < y_scalar
         image_dimensions[i] = (image_dimensions[i] * x_scalar).to_i
         image_dimensions[i + 1] = (image_dimensions[i + 1] * x_scalar).to_i
